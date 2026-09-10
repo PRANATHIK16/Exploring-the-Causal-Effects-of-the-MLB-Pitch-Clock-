@@ -1,0 +1,634 @@
+---
+title: "Exploring the Causal Effects of Introducing the Pitch Clock to the MLB"
+author: 
+  - "Aiden Gormley"
+  - "Sara Murphy"
+  - "Pranathi Kovvuru"
+date: "04/30/2025"
+format: 
+  pdf:
+    toc: true
+    number-sections: false
+    fig-cap: true
+execute: 
+  echo: false
+  warning: false
+editor: visual
+---
+
+# Introduction:
+
+While baseball is known for being America's favorite pastime, the sport itself at the professional league has faced minor decline in recent decades. There are several reasons attributerd to this trend such as the emergence of other professional sports, adapting to televised games, occuring scandals, and ticket prices.
+
+But one issue that stood out in particular had been the game's length. Over the decades, the game length of baseball had begun to increase significantly over decades due to a shift towards the defending team as walks and strikeouts began to increase, which in turn, put more emphasis on pitching. With the increase requirement for pitchers, they needed more time to pitch which resulted in extending the game with periods of waiting.
+
+In the modern era of shorter attention spans, sports with high action and little and ongoing plays are the most popular. With baseball slowing down significantly, action was needed. So in the 2023 season, the MLB had introduced the pitch clock which gave pitchers 15-20 seconds between pitches.
+
+For our project, we want to determine the effects of introducing the pitch clock into the MLB. We want to see if the rule change had succeeded in speeding up games. Additionally, we want to determine if the rule change had also led to an increase of attendance. Doing so, we may determine whether this rule change would help reverse the declining trends in baseball.
+
+# Data sets:
+
+For our project, we want to use primary and secondary data to help with our research. Our primary data will be the main set we will use in creating data sets as well as graphs. Our secondary data will help aid in answering questions the primary data could not determine by itself
+
+## Primary:
+
+Our Primary data set is a large table of Major League Baseball Games from 2020-2024. It is a data set of over 10,000 games which are the cases, and 162 attributes. We can consider this a large enough sample size to make conclusions from.
+
+The data itself was found on Kaggle and authored by collaborator Gareth Flandro who took data from <https://www.retrosheet.org/gamelogs/> and tidied the data into a single table. This data set is licensed by MIT.
+
+For this data set, we will want to wrangle it further to choose the certain attributes we will want to analyze. The following attributes being:
+
+1.  **Season**: we will use seasons to compare the differences in points since rule changes happen at the start of a season. We will compare the years 2021 and 2022 to 2023 and 2024 (once the change was in place). We originally wanted to use 2020 data but because Covid prohibited any attendance, we decided to exclude it from the data.
+
+2.  **Stadium:** We will want to define each game by their stadium. When it comes to the attendance of games, stadiums play a huge part in determining counts. every stadium has different capacities that would limit the attendance through seat sizes and ticket prices.
+
+3.  **Game Length:** This will be a dependent variable we will be measuring
+
+4.  **Spectator Count:** This will be the second dependent variable to be measured.
+
+## Secondary:
+
+For our secondary data, we want to use a data set that has the stadiums and their capacity. As mentioned, without identifying the stadiums and their capacities, measuring spectator count will be victim to bias. For example, Progressive Field and the Dodger Stadium could have an attendance of 30,000, but because the Progressive Field holds far less, the percentages are different.
+
+Therefore, we will want to use this secondary data so that we can merge the two data sets into one with all the attributes from the primary and the capacity in the secondary.
+
+We will use the data set found on <http://www.stadiumdude.com/mlb-stadium-data/>. The data has all active stadiums and their capacities
+
+## Wrangling:
+
+### Primary Data
+
+Wrangling our data would not be tricky for the most part. We are lucky that the primary source of data had already been tidy with each case correctly attributed for. All that would be required would be to take the 4 wanted attributes and simplify the dates into the season played in. As mentioned, we filtered out the 2020 season since we the Covid restrictions prevented attendance and could confound the analysis due to restrictions, while some Covid restrictions lingered during the 2021 season, they were not as significant enough to really effect the game so we kept 2021 but made sure to address any possible influence.
+
+One big task we had to wrangle was that we wanted to change the values in the Park ID column since the stadiums are coded. Because RetroSheets has data across a century, the stadiums are coded by their location and generation. Thankfully, RetroSheets also has a table that explains what the codes translates to. We would download this ballpark sheet and replace the codes with their true name.
+
+### Secondary Data:
+
+For the secondary data, the biggest part of wrangling was rvest to extract the data from the website. There was no downloadable data so therefore we needed to use rvest to extract the data. Once it was imported, we had a list of seven attributes and 30 cases. Since the data was already tidy, there wasn't much wrangling needed.
+
+We only needed the Name and Capacity column so we used tidyverse to use the select function. The last step of wrangling was to rename the Name column into Stadium which would be helpful when we eventually merge the sets.
+
+### Merged Data:
+
+When it came to merging the two data sets, we were to join them by stadium. We first had to rename some of stadium to account for differences in how they were named whether it be spelling (ball park -\> ballpark) or if the stadium was renamed (Marlins Park -\> loanDepot Park). We then merged the data so that the stadiums would have their corresponding capacity. We also wanted to filter out NA values since they are missing data and can be computed.
+
+The next part would be to add the percentage column. For this, we had the attendance column and divided it by the capacity column. We then multiplied it by 100 to get a percentage value and rounded by two. We would soon find a problem however as some games went over capacity. While this would not be a problem if it were a few percentages, this went up to 300% which could only be explained by an error in how the spectator counts were counted. Thankfully there were not many of these games so we filtered out any game that went over 115% capacity. We also filtered out 0% capacity games under the same pretext of errors.
+
+# F.A.I.R. and C.A.R.E Principles:
+
+## FAIR:
+
+### Findable:
+
+-   Our Primary source was found on Kaggle, a reputable source for finding data sets through basic searches and filtering. Additionally, the data it was based on could be found at RetroSheets website.
+
+### Accessible:
+
+-   For all of our data, there was no pay wall that prevented use of any of our sources, meaning that everyone could access it with a device.
+
+### Interoperable:
+
+-   Our data took the form of csv. files which are not only an accepted format for programs, but also a well known format that many utilize.
+
+-   Our data had also been simplified to an understanding that even non-statisticians could understand by having straightforward titles and labels.
+
+### Reusable:
+
+-   Our data had been provided sufficient explanations on how to recreate our project step by step, with clean and commented code for them to use and get inspiration.
+
+## Care:
+
+### Collective Benefit:
+
+-   Our work while not directly saving lives or making groundbreaking discoveries, it is informational and helpful. Sports enthusiast alike would be able to use our analysis to better understand how a rule change effected their sport.
+
+-   Our data can also help teach others how data can be used to show the consequences of actions within sports.
+
+### Authority to Control:
+
+-   Our data does not violate intellectual property rights nor uses highly sensitive information that would kept keep private.
+
+### Responsibility:
+
+-   Our data is neutral in nature and does not seek to incite provoction.
+
+-   All sources, authors, and licenses are credited and acknowledged.
+
+### Ethics:
+
+-   By no way does our data and project incite any form of harm and maximizes the benefit through it's fruits.
+
+-   This data has the ability for future use.
+
+-   Our data can be considered completely ethical as no person is harmed, no laws are violated, and no moral grounds are broken.
+
+# Exploratory Data Analysis:
+
+With our Data sets tidy and ready to be analyzed, we now come to the exploratory data analysis phase. We will create summary tables, data plots, and graphs to help compare the seasons before and after the rule change. To help amplify our exploratory analysis, we generated a hypothesis that we will try to confirm or reject:
+
+"When the MLB had decided to impose the Pitch Clock to help hasten the times between pitches, it had resulted in quicker games and in turn, increased attendance as a result of the games being faster paced."
+
+Below will be the data visualizations created and the following analysis of what we can conclude and what insights can be learned.
+
+## Statistics of Game Duration.
+
+To first engage in testing our hypothesis, we want to look directly at game duration to see if the rule change had affected it. In this table (Table 1), we created a summary of the 4 seasons (2021-2024) and the duration of their games. The tables observe their means, medians, maximums, and minimums as they are the most needed observations to draw initial understandings
+
+![Table 1: Statistical Summary Table for Duration of Game](images/clipboard-2948218081.png){width="472"}
+
+**Statistical Analysis:**
+
+-   Already we can see that starting from 2023, the season the rule change had been imposed, the duration of games had dropped significantly. The overall trend demonstrates that the duration of games had been declining for all seasons, but a major drop can be seen at 2023.
+
+-   The mean duration for the 2023-2024 seasons had dropped about 27 minutes from the 2021-2022 seasons.
+
+-   The maximums had seen significant drops being well over an hours length. This means that after the rule change, no game had gone over 5 hours. In contrast, the minimum length of games had seen little change
+
+    -   Although these are endpoints and we cannot make generalizations about longer/shorter games.
+
+Overall, we can already conclude that games had gotten shorter after season 2023 and while there could be other arguments for this cause, researching all the major rule changes in 2023, we could not find other changes that would have played a significant role in hastening the games; therefore, it would be safe to say that introducing the pitch clock helped shorten the games.
+
+However, it would be preferable to get a more precise understandting on how the duration was affected by the rule change. To do so, we created a violin plot (Graph 1.) that would not only show the range of game duration per season, but also the density. In areas where the violin is more stretched, There exist more games around that duration.
+
+![Graph 1: Violin Plot of Duration per Game by Season](images/clipboard-999309244.png){width="484"}
+
+**Statistical Analysis:**
+
+-   The violin plot as expected, upholds the conclusions made in the summary table. With there being a decrease in duration after the game.
+
+-   It appears that before the rule change, the time of a game had a significant variance with a more spread out distribution.
+
+    -   Additionally, the distribution appeared more skewed towards longer games. While these outlying long games were very rare, they went up to higher times.
+
+-   After the rule change, the distribution had narrowed closer towards the median. Additionaly, the density around the median was significantly larger evident by having a wider curve.
+
+    -   The Distribution also looks more normal with outlying games being not as long as they used to be.
+
+Overall, we can make the conclusions that the pitch clock, when introduced, had resulted in making games go by quicker as well as preventing games from being excessively long. The pitch clock did not have as strong as an effect on the more shorter lasting games compared to longer ones as their distribution was more random.
+
+We can also see that introducing the pitch clock resulted in the distribution of games being smaller and more centered around the mean. This would mean that it is more unlikely for a game to go on far longer than expected.
+
+## Statistics of Game Spectator Count.
+
+To examine the second part of our hypothesis, whether shorter games improved attendance, we compared spectator counts from the same seasons (2021-2024). A summary table (Table 2) compares the mean,
+
+median, maximum, and minimum attendance by season:
+
+![](images/clipboard-3920453629.png){width="527"}
+
+Table 2: Statistical Summary Table for Spectator Count
+
+**Statistical Analysis:**
+
+-   Post-2023 Increase in Attendance:
+
+    -   The mean and median spectator numbers increase significantly in 2023 and 2024 as compared to 2021-2022. For example, the average attendance increased by about 2,500 people every game when the pitch clock was introduced.
+
+    -   This increase supports our hypothesis that faster-paced games (Table 1) may have improved the spectator experience, resulting in higher attendance.
+
+    -   Although, without knowing the density, we cannot make many far reaching claims with just summary table. Additionally, while there was an increase throughout the years, this could be attributed to variables such as Covid rules and concerns. This is especially evident with 2021 season having significantly lower attendance stats
+
+-   Consistency in Min/Max:
+
+    -   The maximum attendance numbers (likely occurring in important games or weekends) were consistent throughout all seasons, suggesting that the rule change did not significantly harm already-popular games.
+
+    -   The lowest attendance numbers (weekday games or poor weather) similarly showed little change, displaying that the pitch clock had a greater influence on "average" games than outliers.
+
+To further analyze distribution patterns, we created a violin plot (Graph 2) showing spectator numbers by season.
+
+![](images/clipboard-725450373.png){width="499"}
+
+Graph 2: Violin Plot of Spectator Count
+
+**Statistical Analysis:**
+
+-   There is a tighter distribution after 2023. The 2023-2024 violins are slimmer and higher, signifying less variability in attendance. This shows that games were more predictable in terms of fan attendance.
+
+-   In comparison, 2021-2022 violins are broader, representing more attendance variation ,such as more unoccupied seats during slow games. Its worth noting that 2021 had a higher density around lower numbers compared to all seasons, this could be attributed to the aftermath of the Covid season and remaining restrictions.
+
+-   The densest region of the distribution (the largest section of the violin) also shifted toward higher counts, meaning that more games fell within a "popular" attendance range following the rule modification.
+
+While the tables and plots do point to the spectator counts being higher, we cannot make any conclusions with linking the pitch clock and spectators. We will need to go further in detail looking at spectator counts
+
+## Analysis the Percentage of Attendance by Capacity.
+
+One of the biggest problems is that these spectator counts fall victim to bias. As mentioned earlier, the spectator count is limited to how much a stadium can hold. These stadiums also house the games for their home teams which also plays as a rule in the attendance (ex. we would expect more people going to the Yankees than the Athletics).
+
+For this reason, we are going to analyze not just the spectator counts, but the percentage of capacity that is occupied by spectators. In other words, we will look at spectator count over their corresponding capacity. Therefore we can address the differences in team popularity as well as stadium sizes.
+
+While there are many ways we could look at this visually, we will continue to use the tables and violin plots to be consistent with all other visuals.
+
+We started with the summary table (Table 3) once again to compare the first 2 seasons before the pitch clock and the 2 seasons after. We followed the same stats we have used before:
+
+![Graph 3: Distribution of Stadium Capacity by Percentage](images/clipboard-2785409106.png){width="451"}
+
+**Statistical Analysis:**
+
+-   With the percentages being used instead, we get more clear and simpler data to analyze. We can see a similar patter with the spectator count table but now we can paint a better picture.
+
+-   While the trend of spectator counts increasing for all seasons and especially after 2021 still remains, we can see that after the rule change, percentage of attendance mean had increased by 6% to around 71% and stayed around that value for the 2024 season.
+
+    -   This helps us understand that the trend of always increasing attendance may not be as accurate as thought due to the increase in 2024 being to small to determine a relationship.
+
+-   The maximum capacities for 2022-2024 are around the same and this can be accredited to high stake games such as The World Series. Whats interesting is that while the spectator count maximum in 2024 was less than 2023, here it is the opposite, backing our belief that doing spectator count without addressing stadium differences could lead to bias.
+
+We also wanted to do the violin plot (Graph 3) so that we can compare the densities between seasons as well as with graph 2 to see any possible difference in measuring.
+
+![Graph 3: Distribution of Stadium Capacity by Percentage](images/clipboard-2215091519.png){width="499"}
+
+**Statistical Analysis:**
+
+-   Compared to the spectators violin plot, the densities have similar patters, but there are some notable differences:
+
+    -   The overall density for each season is more evenly distributed but with higher densities around the means. We can also see that the tails of these plots are significantly smaller; however, this is likely due to the filtering so we cannot make broad assumptions.
+
+    -   of all the seasons 2021 had the most difference from the spectator plot as it's density is more distributed upwards. We can see that the distribution follows a patter far more similar to that of the 2023 and 2024 season. Implying that the rule change did not affect the attendance significantly.
+
+-   Overall, while the distributions and densities did not change by that much, there is still enough change that we believe we helped eliminate bias. While not much changed from what we concluded from spectator counts, we are less certain that the rule change had an affect on the games as seen with the similar distributions before and after (excluding the Covid difficulties)
+
+# Conclusion:
+
+After gathering the data and analyzing it with visualizations, we can make some conclusions. What we can conclude with the most certainty is that after the Pitch Clock was introduced in the 2023 season, the duration of games had fallen significantly. We saw that games were about 30 minutes shorter and that they never exceeded over 4 and a half hours. We also see that the game duration was more consistent and predictable, with longer games not going on excessively. While there are some variables that could play in affect in the time, there were no major rule changes beyond pitch clock that would have affected the times and 2022 having the same patterns as 2021 shows that Covid did not play a big affect on times.
+
+Despite this conclusion on the times, we cannot say that our hypothesis is correct. This is because while we gathered sufficient evidence in determining that the shorter times made the game more popular. This is because unlike the duration, the difference in attendance was too small to make broad conclusions as there could be more variables causing this. While we can say that the MLB has seen an increase in attendance since 2021, we cannot make conclusions off of this that MLB is no longer in decline or that the rule change resulted into this.
+
+Although we wanted to see a relationship between game duration and game attendance, logically we should not expect a relationship for each game. When someone buys a ticket and enters the stadium, he does not know how long the game will take. In fact all attendees, athletes, and people watching from home cannot accurately determine if a game will take a certain amount of time. At best, they can expect the duration through patterns for past games. While we do see a pattern of games being relatively closer to a standard time, the data is too new for most people to make this assumption.
+
+Furthermore, while we are certain that the pitch clock was the only significant variable to affect the duration, we feel that this is not the case for attendence. Attendence for games has a lot of bias that includes:
+
+-   Many spectators being more adament fans meaning they go to games more frequently regardless of conditions
+
+-   Certain players (ex. Shohei Otani) having a large following and popularity which draws more attendance then regularly.
+
+-   Some seasons could have worse weather conditions than others such as more rain.
+
+After all of this, we can say that when the MLB had introduced the Pitch Clock, it forced Pitchers to pitch more frequently, which in turn, no longer stalled the game which dropped the times significantly. However, because this rule change was only recently and that there have been other events affecting the MLB, we cannot say that the shorter games has resulted in an influx of attendance.
+
+## Limitations and Constraints:
+
+Because this project was done within a 2-week time frame, we were limited in our project and thus we believe there are several limitations were were unable to properly address:
+
+-   We were limited to 4 seasons since the rule change was so recent so we cannot see the full affects come into play
+
+-   The Covid Pandemic had affected Professional Baseball significantly and the looming affects still exist for the MLB, this also hurt the 2024 season as some of the ealier games happened during the height of Covid.
+
+-   As mentioned in the conclusion, there are addressed variable biases when it comes to player attendance.
+
+-   There were some missing information and errors int he sources we used which resulted in the loss of some game.
+
+Despite these errors, we believe that most of our data, visuals, and conclusions hold true. Although our estimations will be slightly affected.
+
+## Continuing the Project
+
+If we were to have more time with this project, there would definetly have been more things we would have done to further the quality and information of it. We are writing this section for future coders, readers just in case they would want to pick up this code and continue the project.
+
+Here are some of the ways we would have advanced it:
+
+-   We would have fixed the errors mentioned above by using instrumental variables as well as filtering out more outliers.
+
+-   we would have used more plots and tables to get a better picture. Perhaps even a linear regression model to determine if there actually is a correlation between time and attendance.
+
+-   We would have went beyond stadium attendance and included televised viewership to get a bigger picture and eliminate possible location bias. However, this was not achievable since we could not find viewership data for almost all games. We did not want to complicate the study by making estimations or calculations.
+
+-   We also may have wanted to look at a third relationship: How the Pitch Clock was affecting pitcher performance since it forced them to make plays more often. We did not due this since we wanted to stay on path with our analyzing a relationship. However, we do believe this is possible since there is data on pitcher performance for every team during a season (although this is yearly so you would have to account for this).
+
+-   If there is more seasons for the reader reading this now, it would be good to expand the seasons to build a better relationship. However, should any new rules be imposed, they should be accounted for.
+
+These ideas we hope someday will be answered and we have made sure this code is repodrucible for any person who wants to contuse with this project. The ReadME section should have advice and all code and data sets are stored in the Repository.
+
+# Sources:
+
+Castrovince, Anthony. “8 Changes Fans Need to Know for the ’23 Season.” MLB.com, MLB, 29 Mar. 2023, www.mlb.com/news/mlb-rules-changes-refresher-2023-season#:\~:text=As%20a%20result%20of%20bigger,runners%20on%20stolen%2Dbase%20attempts.
+
+Flandro, Gareth. “Major League Baseball Games (2020–2024).” Kaggle, 8 Mar. 2025, www.kaggle.com/datasets/garethflandro/major-league-baseball-games-2024.
+
+“MLB Stadium Data.” Stadium Dude, 31 May 2020, www.stadiumdude.com/mlb-stadium-data/.
+
+“Retrosheet Game Logs.” Retrosheet, www.retrosheet.org/gamelogs/. Accessed 5 May 2025.
+
+# Code Appendix:
+
+```{r, echo=TRUE, eval=FALSE}
+# Creating the Data
+## Loading necessary packages
+library(tidyverse)
+library(lubridate)
+library(dplyr)
+library(rvest)
+
+## Loading the raw data of MLB games from 2020-2024 
+mlb_data <- read_csv("MLB2020-2024GameInfo.csv",
+                     col_types = cols(
+                       Date = col_character(),
+                       HT = col_character(),
+                       `Spectator Count` = col_character(),
+                       `Length of Game` = col_character(),
+                       .default = col_guess()
+                     ))
+
+## Process and tidy the raw data 
+final_data <- mlb_data %>%
+  mutate(
+    # Selecting desired columns
+    Date = ymd(Date),
+    Year = year(Date),
+    `Spectator Count` = as.numeric(str_replace_all(`Spectator Count`, "[^0-9]", "")),
+    `Length of Game` = as.numeric(`Length of Game`)
+  ) %>%
+  filter(
+    between(Year, 2021, 2024), #CHoosing year range and ignoring 2020 year
+    !is.na(`Length of Game`)  
+  ) %>%
+  select(
+    `Stadium` = 'Park ID',
+    Year,
+    `Spectator Count`,
+    `Length of Game`
+  )
+
+
+## Saving the Dataset
+write_csv(final_data, "mlb_games_2020-2024.csv")
+
+
+# Renaming the dataset stadiums and matching codes
+
+## Read the CSV file for ballpark data and saved final data
+mlb_games <- read.csv("mlb_games_2020-2024.csv")  # Contains game data
+ballparks <- read.csv("ballparks.csv")  # Contains stadiumnames and codes
+
+# Clean column names (remove spaces and special characters)
+names(mlb_games) <- gsub("[ .]", "_", names(mlb_games))
+names(ballparks) <- gsub("[ .]", "_", names(ballparks))
+
+# Merge the datasets (match Stadium to PARKID)
+final_data <- mlb_games %>%
+  left_join(ballparks, by = c("Stadium" = "PARKID")) %>%
+  select(
+    'Stadium' = NAME,
+    Year,
+    'Spectator Count' = Spectator_Count,
+    'Duration of Game' = Length_of_Game
+  )
+
+# Save to new CSV
+write.csv(final_data, "mlb_games_with_stadium_names.csv", row.names = FALSE)
+
+
+# Creating Secondary Data
+
+## Importing Secondary html
+
+Stadiums <- read_html("http://www.stadiumdude.com/mlb-stadium-data/") %>%
+  html_elements(css = "table") %>%
+  html_table()
+
+## Tidying stadium data
+stadiumData <- (Stadiums[[1]]) %>%
+  select("Name", "Capacity") %>% # choosing desired attributes
+  rename(
+    'Stadium' = 'Name', # renaming column to stadiums for coherency
+  )
+
+
+
+# Merging the Primary and Secondary datasets
+## Load required package
+
+## Step 1: Read in the original CSV file
+mlb_data <- read.csv("mlb_games_with_stadium_names.csv", stringsAsFactors = FALSE)
+
+## Step 2: Clean and standardize stadium names
+mlb_data_clean <- mlb_data %>%
+  mutate(
+    Stadium = trimws(Stadium),  # Remove whitespace
+    Stadium = case_when(
+      Stadium == "Great American Ballpark" ~ "Great American Ball Park",
+      Stadium == "Marlins Park" ~ "loanDepot Park",
+      Stadium == "Minute Maid Park" ~ "Daikin Park",
+      Stadium == "Safeco Field" ~ "T-Mobile Park",
+      Stadium == "Miller Park" ~ "American Family Field",
+      Stadium == "Yankee Stadium II" ~ "Yankee Stadium",
+      Stadium == "Busch Stadium III" ~ "Busch Stadium",
+      Stadium == "Globe Life Field in Arlington" ~ "Globe Life Field",
+      Stadium == "Angel Stadium of Anaheim" ~ "Angel Stadium",
+      Stadium == "Guaranteed Rate Field;U.S. Cellular Field" ~ "Guaranteed Rate Field",
+      Stadium == "Oakland-Alameda County Coliseum" ~ "Sutter Health Park",
+      TRUE ~ Stadium
+    )
+  )
+
+## Step 3: Create the official stadium capacity table
+stadium_capacity <- data.frame(
+  Stadium = c(
+    "Dodger Stadium", "Chase Field", "T-Mobile Park", "Coors Field", "Yankee Stadium",
+    "Angel Stadium", "Oriole Park at Camden Yards", "Busch Stadium", "Great American Ball Park",
+    "Citizens Bank Park", "Citi Field", "American Family Field", "Wrigley Field", "Rogers Centre",
+    "Nationals Park", "Truist Park", "Comerica Park", "Daikin Park", "Oracle Park", "Target Field",
+    "Petco Park", "Guaranteed Rate Field", "Globe Life Field", "PNC Park", "Kauffman Stadium",
+    "Fenway Park", "loanDepot Park", "Progressive Field", "Sutter Health Park",
+    "George M. Steinbrenner Field"
+  ),
+  Capacity = c(
+    56000, 48330, 47929, 46897, 46537, 45517, 44970, 44383, 43500, 42901,
+    41922, 41900, 41649, 41500, 41373, 41084, 41083, 41168, 41331, 38544,
+    39860, 40615, 40300, 38747, 37903, 37755, 36742, 34830, 14014, 11026
+  ),
+  stringsAsFactors = FALSE
+)
+
+## Step 4: Merge the cleaned data with the stadium capacity data
+merged_data <- merge(mlb_data_clean, stadium_capacity, by = "Stadium", all.x = TRUE)
+
+## Step 5: Remove stadiums with no capacity data (i.e., not matched during merge)
+## These will have NA in the Capacity column
+## Filter by known names instead
+merged_data_filtered <- merged_data %>%
+  filter(!is.na(Capacity))
+
+
+write.csv(merged_data_filtered, "mlb_games_with_capacity_filtered.csv", row.names = FALSE)
+
+# Creating the percentage column
+final_MergedData <- merged_data_filtered %>%
+  mutate(
+    percentage_capacity = round((Spectator.Count / Capacity) * 100, 2)
+  ) %>%
+  filter(percentage_capacity <= 115) %>%  # <- removes rows wih percentages over 115%
+  filter(percentage_capacity > 0) %>%  # <- removes rows wih percentages over 115%
+  rename(
+    'Spectator Count' = Spectator.Count,
+    'Stadium Capacity' = Capacity,
+    'Capacity Percentage' = percentage_capacity,
+    'Duration of Game' = Duration.of.Game
+  )
+
+
+
+# Creating the Summarise graph for game duration
+## Downloading required packages
+library(ggplot2)
+library(dplyr)
+library(knitr)
+library(kableExtra)
+
+
+## Creating Summary Table
+
+summary_table <- final_data %>%
+  group_by(Year) %>%
+  summarize(
+    Mean_Length = mean(`Duration of Game`, na.rm = TRUE),
+    Median_Length = median(`Duration of Game`, na.rm = TRUE),
+    Max_Length = max(`Duration of Game`, na.rm = TRUE),
+    Min_Length = min(`Duration of Game`, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  rename(
+    `Mean Duration` = Mean_Length,
+    `Median Duration` = Median_Length,
+    `Max Duration` = Max_Length,
+    `Min Duration` = Min_Length
+  )
+
+## Displaying summary table
+summary_table %>%
+  kable(
+    caption = "Summary Statistics for Game Duration by Year", 
+    digits = 2, 
+    align = c("c", rep("c", 4))
+  ) %>%
+  kable_styling(
+    bootstrap_options = c("striped", "hover", "condensed"), 
+    full_width = FALSE, 
+    font_size = 14
+  ) %>%
+  row_spec(0, bold = TRUE)
+
+
+## Creating violin plot
+ggplot(final_data, aes(x = factor(Year), y = `Duration of Game`)) +
+  geom_violin(alpha = 0.5) +
+  labs(
+    title = "Density of Game Duration by Season",
+    x = "Season",
+    y = "Game Duration (minutes)",
+  ) +
+  theme_classic() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
+
+
+
+# Creating the Summary graph for spectator counts
+## Downloading required packages
+library(ggplot2)
+library(dplyr)
+library(knitr)
+library(kableExtra)
+
+## Creating Summary Table for Spectator Counts
+summary_table_spectators <- final_data %>%
+  group_by(Year) %>%
+  summarize(
+    Mean_Spectators = mean(`Spectator Count`, na.rm = TRUE),
+    Median_Spectators = median(`Spectator Count`, na.rm = TRUE),
+    Max_Spectators = max(`Spectator Count`, na.rm = TRUE),
+    Min_Spectators = min(`Spectator Count`, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  rename(
+    `Mean Spectators` = Mean_Spectators,
+    `Median Spectators` = Median_Spectators,
+    `Max Spectators` = Max_Spectators,
+    `Min Spectators` = Min_Spectators
+  )
+
+## Displaying summary table for spectators
+summary_table_spectators %>%
+  kable(
+    caption = "Summary Statistics for Spectator Counts by Year", 
+    digits = 0,  # Using 0 digits since we're counting people
+    align = c("c", rep("c", 4))
+  ) %>%
+  kable_styling(
+    bootstrap_options = c("striped", "hover", "condensed"), 
+    full_width = FALSE, 
+    font_size = 14
+  ) %>%
+  row_spec(0, bold = TRUE)
+
+## Creating violin plot for spectator counts
+ggplot(final_data, aes(x = factor(Year), y = `Spectator Count`)) +
+  geom_violin(alpha = 0.5, fill = "steelblue") +
+  labs(
+    title = "Distribution of Spectator Counts by Season",
+    x = "Season",
+    y = "Number of Spectators"
+  ) +
+  theme_classic() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    plot.title = element_text(hjust = 0.5, face = "bold")
+  ) +
+  scale_y_continuous(labels = scales::comma)  # Format y-axis with commas for thousands
+
+
+
+# Creating the Visuals for the Capacity Percentage
+## Loading required packages
+library(ggplot2)
+library(dplyr)
+library(knitr)
+library(kableExtra)
+
+## Creating the summary table
+summary_table_Percentage <- final_MergedData %>%
+  group_by(Year) %>%
+  summarize(
+    Mean_percentage = mean(`Capacity Percentage`, na.rm = TRUE),
+    Median_percentage = median(`Capacity Percentage`, na.rm = TRUE),
+    Max_percentage = max(`Capacity Percentage`, na.rm = TRUE),
+    Min_percentage = min(`Capacity Percentage`, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  rename(
+    `Mean Capacity Pct.` = Mean_percentage,
+    `Median Capacity Pct.` = Median_percentage,
+    `Max Capacity Pct.` = Max_percentage,
+    `Min Capacity Pct.` = Min_percentage
+  ) %>%
+  mutate(across(
+    starts_with(c("Mean", "Median", "Max", "Min")),
+    ~ round(.x, 2)
+  ))
+
+## Displaying summary table for capacity percentages
+summary_table_Percentage %>%
+  kable(
+    caption = "Summary Statistics for Stadium Capacity Pct. Per Season", 
+    align = c("c", rep("c", 4))
+  ) %>%
+  kable_styling(
+    bootstrap_options = c("striped", "hover", "condensed"), 
+    full_width = FALSE, 
+    font_size = 14
+  ) %>%
+  row_spec(0, bold = TRUE)
+
+## Creating violin plot for Capactiy Percentages
+ggplot(final_MergedData, aes(x = factor(Year), y = `Capacity Percentage`)) +
+  geom_violin(alpha = 0.5, fill = "steelblue") +
+  labs(
+    title = "Distribution of Stadium Capacity by Percentage",
+    x = "Season",
+    y = "Stadium capacity Pct.",
+  ) +
+  theme_classic() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    plot.title = element_text(hjust = 0.5, face = "bold")
+  ) +
+  scale_y_continuous(labels = scales::comma)  # Format y-axis with commas for thousands
+```
